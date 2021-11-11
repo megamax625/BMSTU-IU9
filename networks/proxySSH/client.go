@@ -1,75 +1,138 @@
 package main
 
 import (
-	"fmt"
-	"golang.org/x/crypto/ssh"
+	"bytes"
 	"log"
-	"os"
+	"net/http"
+	"time"
+
+	"github.com/gorilla/websocket"
 )
 
-func main() {
-	user := ""
-	pass := ""
-	host := "127.0.0.1"
-	port := "2200"
+const (
+	// Time allowed to write a message to the peer.
+	writeWait = 10 * time.Second
 
-	config := &ssh.ClientConfig{
-		User: user,
-		Auth: []ssh.AuthMethod{
-			ssh.Password(pass),
-		},
-		// allow any host key to be used (non-prod)
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-	}
+	// Time allowed to read the next pong message from the peer.
+	pongWait = 60 * time.Second
 
-	// connect
-	client, err := ssh.Dial("tcp", host+":"+port, config)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer client.Close()
+	// Send pings to peer with this period. Must be less than pongWait.
+	pingPeriod = (pongWait * 9) / 10
 
-	// start session
-	sess, err := client.NewSession()
-	if err != nil {
-		log.Fatal("Failed to create session: ", err)
-	}
-	defer sess.Close()
+	// Maximum message size allowed from peer.
+	maxMessageSize = 512
+)
 
-	// StdinPipe for commands
-	stdin, err := sess.StdinPipe()
-	if err != nil {
-		log.Fatal(err)
-	}
+var (
+	newline = []byte{'\n'}
+	space   = []byte{' '}
+)
 
-	// setup standard out and error
-	// uses writer interface
-	sess.Stdout = os.Stdout
-	sess.Stderr = os.Stderr
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
 
-	// Start remote shell
-	err = sess.Shell()
-	if err != nil {
-		log.Fatal(err)
-	}
+// Client is a middleman between the websocket connection and the hub.
+type Client struct {
+	// The websocket connection.
+	conn *websocket.Conn
 
-	// send the commands
-	commands := []string{
-		"EXIT",
-		"SHOW",
-		"MKDIR",
-		"DELDIR",
-	}
-	for _, cmd := range commands {
-		_, err = fmt.Fprintf(stdin, "%s\n", cmd)
+	// Buffered channel of outbound messages.
+	send chan []byte
+}
+
+// readPump pumps messages from the websocket connection to the hub.
+//
+// The application runs readPump in a per-connection goroutine. The application
+// ensures that there is at most one reader on a connection by executing all
+// reads from this goroutine.
+func (c *Client) readPump() {
+	defer func() {
+		c.conn.Close()
+	}()
+	c.conn.SetReadLimit(maxMessageSize)
+	c.conn.SetReadDeadline(time.Now().Add(pongWait))
+	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+	for {
+		_, message, err := c.conn.ReadMessage()
 		if err != nil {
-			log.Fatal(err)
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Printf("error: %v", err)
+			}
+			break
+		}
+		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+	}
+}
+
+// writePump pumps messages from the hub to the websocket connection.
+//
+// A goroutine running writePump is started for each connection. The
+// application ensures that there is at most one writer to a connection by
+// executing all writes from this goroutine.
+func (c *Client) writePump() {
+	ticker := time.NewTicker(pingPeriod)
+	defer func() {
+		ticker.Stop()
+		c.conn.Close()
+	}()
+	for {
+		select {
+		case message, ok := <-c.send:
+			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			if !ok {
+				// The hub closed the channel.
+				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
+				return
+			}
+
+			w, err := c.conn.NextWriter(websocket.TextMessage)
+			if err != nil {
+				return
+			}
+			w.Write(message)
+
+			// Add queued chat messages to the current websocket message.
+			n := len(c.send)
+			for i := 0; i < n; i++ {
+				w.Write(newline)
+				w.Write(<-c.send)
+			}
+
+			if err := w.Close(); err != nil {
+				return
+			}
+		case <-ticker.C:
+			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			if err := c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+				return
+			}
 		}
 	}
+}
 
-	// Wait for sess to finish
-	err = sess.Wait()
+// serveWs handles websocket requests from the peer.
+func serveWs(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return
+	}
+	client := &Client{conn: conn, send: make(chan []byte, 256)}
+
+	// Allow collection of memory referenced by the caller by doing all work in
+	// new goroutines.
+	go client.writePump()
+	go client.readPump()
+}
+
+func main() {
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		serveWs(w, r)
+	})
+	err := http.ListenAndServe("127.0.0.1:2200", nil)
+	if err != nil {
+		log.Fatal("ListenAndServe: ", err)
 	}
 }
