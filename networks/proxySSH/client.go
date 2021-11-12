@@ -7,10 +7,11 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"golang.org/x/crypto/ssh"
 )
 
 const (
-	// Time allowed to write a message to the peer.
+	// Time allowed to write a message to the peer.s
 	writeWait = 10 * time.Second
 
 	// Time allowed to read the next pong message from the peer.
@@ -21,11 +22,6 @@ const (
 
 	// Maximum message size allowed from peer.
 	maxMessageSize = 512
-)
-
-var (
-	newline = []byte{'\n'}
-	space   = []byte{' '}
 )
 
 var upgrader = websocket.Upgrader{
@@ -54,7 +50,11 @@ func (c *Client) readPump() {
 	c.conn.SetReadLimit(maxMessageSize)
 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
-	for {
+	name := ""
+	pass := ""
+	host := "127.0.0.1"
+	port := "2200"
+	for iter := 1;;{
 		_, message, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
@@ -62,7 +62,53 @@ func (c *Client) readPump() {
 			}
 			break
 		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		if iter == 1 {
+			iter++
+			name = string(message)
+			continue
+		}
+		if iter == 2 {
+			iter++
+			pass = string(message)
+		}
+		config := &ssh.ClientConfig{
+			User: name,
+			Auth: []ssh.AuthMethod{
+				ssh.Password(pass),
+			},
+			HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		}
+		sshClient, err := ssh.Dial("tcp", host+":"+port, config)
+		if err != nil {
+			iter = 1
+			c.send <- []byte("failed_reg")
+			log.Printf("Error: %v", err)
+			continue
+		}
+		defer sshClient.Close()
+		if iter == 3 {
+			iter++
+			sshClient.Close()
+			continue
+		}
+		sess, err := sshClient.NewSession()
+		if err != nil {
+			log.Printf("Error: %v", err)
+		}
+		defer sess.Close()
+		var b bytes.Buffer
+		sess.Stdout = &b
+		err = sess.Run(string(message))
+		if err != nil {
+			log.Printf("Error: %v", err)
+		}
+		if err != nil {
+			log.Printf("Error: %v", err)
+		}
+		bs := b.Bytes()
+		sshClient.Close()
+		sess.Close()
+		c.send <- bs
 	}
 }
 
@@ -93,10 +139,8 @@ func (c *Client) writePump() {
 			}
 			w.Write(message)
 
-			// Add queued chat messages to the current websocket message.
 			n := len(c.send)
 			for i := 0; i < n; i++ {
-				w.Write(newline)
 				w.Write(<-c.send)
 			}
 
@@ -114,13 +158,15 @@ func (c *Client) writePump() {
 
 // serveWs handles websocket requests from the peer.
 func serveWs(w http.ResponseWriter, r *http.Request) {
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	client := &Client{conn: conn, send: make(chan []byte, 256)}
-
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
 	go client.writePump()
@@ -131,7 +177,7 @@ func main() {
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(w, r)
 	})
-	err := http.ListenAndServe("127.0.0.1:2200", nil)
+	err := http.ListenAndServe("127.0.0.1:2201", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

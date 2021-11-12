@@ -6,45 +6,61 @@
 </head>
 <body>
 <script type="text/javascript">
-    window.onload = function () {
-        var conn;
-        var cmd = document.getElementById("command");
-
-        document.getElementById("cmdForm").onsubmit = function () {
-            if (!conn) {
-                return false;
-            }
-            if (!cmd.value) {
-                return false;
-            }
-            conn.send(cmd.value);
-            cmd.value = "";
-            return false;
-        };
-
-        if (window["WebSocket"]) {
-            conn = new WebSocket("ws://" + document.location.host + "/ws");
-            conn.onclose = function (evt) {
-                var item = document.createElement("div");
-                item.innerHTML = "<b>Connection closed.</b>";
+    window.addEventListener("load", function(){
+        var cmd = document.getElementById("cmdForm")
+        connect= this.document.getElementById("connect")
+        connect.addEventListener("click", function() {
+            var socket = new WebSocket("ws://127.0.0.1:2201/ws");
+            socket.onopen = function() {
+                socket.send(document.getElementById("name").value)
+                socket.send(document.getElementById("pass").value)
+                setTimeout(function(){
+                    document.getElementById("cmdForm").style.display = "block"
+                }, 500)
             };
-            conn.onmessage = function (evt) {
-                var messages = evt.data.split('\n');
-                for (var i = 0; i < messages.length; i++) {
-                    var item = document.createElement("div");
-                    item.innerText = messages[i];
+
+            socket.onclose = function(event) {
+                if (event.wasClean) {
+                    alert('Closed clean');
+                } else {
+                    alert('Connection cutoff');
+                }
+                connect.style.display = "inline"
+                document.getElementById("cmdForm").style.display = "none"
+                document.getElementById("result").innerHTML = ""
+            };
+
+            socket.onmessage = function(event) {
+                if (event.data === "failed_reg") {
+                    socket.close()
+                } else {
+                    let result = document.getElementById("result")
+                    result.innerHTML = event.data
                 }
             };
-        } else {
-            var item = document.createElement("div");
-            item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
-        }
-    };
+
+            socket.onerror = function(error) {
+                alert("Error: " + error.message);
+            };
+            let command = document.getElementById("command")
+            command.value = ""
+            cmd.addEventListener("submit", function(event){
+                event.preventDefault();
+                if (command.value === "EXIT") {
+                    socket.close()
+                }
+                socket.send(command.value)
+            })
+        })
+    })
 </script>
+<p><label for="name"></label><input type="text" placeholder="username" id="name"></p>
+<p><label for="pass"></label><input type="password" placeholder="password" id="pass"></p>
+<button id="connect">Подключиться</button>
 <div class="form-container" id="form-container">
     <form action="" method="post" id="cmdForm">
         <p>Введите команду</p>
-        <p><label for="command"></label><input type="text" size="40" id="command" autocomplete="off"></p>
+        <p><label for="command"></label><input type="text" size="12" id="command" autocomplete="off"></p>
         <p><input type="submit" value="Ок"></p>
     </form>
     <div id="result"></div>
