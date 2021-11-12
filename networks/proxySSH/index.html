@@ -21,10 +21,11 @@
 
             socket.onclose = function(event) {
                 if (event.wasClean) {
-                    alert('Closed clean');
+                    alert('Failed reg');
                 } else {
                     alert('Connection cutoff');
                 }
+                connect.style.backgroundColor = "blue"
                 connect.style.display = "inline"
                 document.getElementById("cmdForm").style.display = "none"
                 document.getElementById("result").innerHTML = ""
@@ -32,6 +33,7 @@
 
             socket.onmessage = function(event) {
                 if (event.data === "failed_reg") {
+                    connect.style.backgroundColor = "red"
                     socket.close()
                 } else {
                     let result = document.getElementById("result")
@@ -54,8 +56,8 @@
         })
     })
 </script>
-<p><label for="name"></label><input type="text" placeholder="username" id="name"></p>
-<p><label for="pass"></label><input type="password" placeholder="password" id="pass"></p>
+<p><label for="name"></label><input type="text" placeholder="username" size="12" id="name"></p>
+<p><label for="pass"></label><input type="password" placeholder="password" size="12" id="pass"></p>
 <button id="connect">Подключиться</button>
 <div class="form-container" id="form-container">
     <form action="" method="post" id="cmdForm">
