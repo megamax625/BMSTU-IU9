@@ -49,7 +49,8 @@ public class Main {
         I *= hx;
 
         System.out.println("First iteration I = " + I);
-        float NextI = Float.POSITIVE_INFINITY;
+        Float NextI = I;
+        I = Float.POSITIVE_INFINITY;
         int iter = 2;
         while (RungeRule(I, NextI) > eps) {
             I = NextI;
@@ -72,7 +73,7 @@ public class Main {
                 Fxs[i] = hy * sum;
             }
     
-            NextI = 0;
+            NextI = 0.0f;
             for (int i = 0; i < n + 1; i++) {
                 float add = Fxs[i];
                 if (i == 0 || i == n) add /= 2;
