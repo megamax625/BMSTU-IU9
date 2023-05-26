@@ -1,5 +1,4 @@
 import java.util.Arrays;
-
 import Jama.Matrix;
 
 public class Main {
@@ -12,10 +11,9 @@ public class Main {
         float[] beta = new float[b.length];
         float[] x = new float[b.length];
 
-        checkForDiagonalDominance(a, b, c);
         forward(a, b, c, d, alpha, beta);
-        System.out.println(Arrays.toString(alpha));
-        System.out.println(Arrays.toString(beta));
+        System.out.println("alpha = " + Arrays.toString(alpha));
+        System.out.println("beta = " + Arrays.toString(beta));
         back(x, alpha, beta);
         System.out.println("x = (");
         for (float f : x) {
@@ -29,24 +27,17 @@ public class Main {
             newD[i] = (a[i] * x[i - 1] + b[i] * x[i] + c[i] * x[i + 1]);
         }
         newD[n - 1] = (a[n - 2] * x[n - 2] + b[n - 1] * x[n - 1]);
-        System.out.println("d* = " + Arrays.toString(newD));
+        // System.out.println("d* = (");
+        // for (float f : newD) {
+        //     System.out.format("%.16f\n",f);
+        // }
+        // System.out.println(")");
         float[] error = getCalcError(a, b, c, d, newD);
         System.out.println("error = (");
         for (float e : error) {
             System.out.format("%.16f\n", e);
         }
         System.out.println(")");
-    }
-
-    private static void checkForDiagonalDominance(float[] a, float[] b, float[] c) {
-        for (int i = 1; i < b.length - 2; i++) {
-            if (b[i] < Math.abs(a[i]) + Math.abs(c[i])) {
-                System.out.println("Не выполняется условие диагонального преобладания");
-            }
-        }
-        if (b[b.length - 1] < a[a.length - 1]) {
-            System.out.println("Не выполняется условие диагонального преобладания");
-        }
     }
 
     private static void forward(float[] a, float[] b, float[] c, float[] d, float[] alpha, float[] beta) {
@@ -88,7 +79,11 @@ public class Main {
         for (int i = 0; i < n; i++) {
             r[i] -= newD[i];
         }
-        System.out.println("r: " + Arrays.toString(r));
+        // System.out.println("r = (");
+        // for (float f : r) {
+        //     System.out.format("%.16f\n",f);
+        // }
+        // System.out.println(")");
         float[] e = new float[n];
         for (int i = 0; i < n; i++) {
             e[i] = 0.0f;

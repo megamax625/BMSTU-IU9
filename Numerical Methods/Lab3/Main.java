@@ -8,7 +8,7 @@ public class Main {
     static float xn_2 = 2;
     static UnaryOperator<Float> func = (x) -> (float)(Math.exp((double)(x)));
     static UnaryOperator<Float> func2 = (x) -> (float)(4 * Math.pow(x, 3) / (Math.pow(x, 8) + 1));
-    static int n = 10;
+    static int n = 16;
 
     public static void main(String[] args) {
         System.out.println("Starting interpolation for exp");
@@ -46,7 +46,7 @@ public class Main {
             int ind = i / 2;
             if (ind >= n - 1) ind = n - 1;
             float spline = (float) (a[ind] + b[ind] * (xi - x[ind]) + c[ind] * Math.pow((xi - x[ind]), 2) + d[ind] * Math.pow((xi - x[ind]), 3));
-            System.out.printf("x:%f\t y:%.16f\t spline value:%.16f\t diff:%.16f\n", xi, yi, spline, yi - spline);
+            System.out.printf("x:%f\t y:%.16f\t spline value:%.16f\t diff:%.16f\t err:%16f\n", xi, yi, spline, yi - spline, Math.abs((yi-spline)/yi));
         }
     }
 

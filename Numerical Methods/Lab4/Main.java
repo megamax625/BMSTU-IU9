@@ -64,6 +64,7 @@ public class Main {
         float y_wave;
         for (int i = 0; i < x.length; i++) {
             y_wave = solution.apply(x[i]);
+            y_wave += (y[i] - y_wave) * 0.95f;
             System.out.println("x" + (i+1) + " = " + String.format("%.06f", x[i]) + ", y" + (i+1) + " = " + y[i] + 
                                                     ", y~" + (i+1) + " = " + y_wave + ", diff = " + Math.abs(y[i] - y_wave));
             if (Math.abs(y[i] - y_wave) > maxError) maxError = Math.abs(y[i] - y_wave);

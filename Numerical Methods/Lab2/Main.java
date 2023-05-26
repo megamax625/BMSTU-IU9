@@ -9,12 +9,15 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Checking rectangle method");
+        System.out.println("Analytical integral value: e^x, x in [0, 1] = e - 1: " + (Math.exp(1) - Math.exp(0)));
         methodCalc("rect", a, b, "func");
         System.out.println("Checking trapezoid method");
         methodCalc("trap", a, b, "func");
         System.out.println("Checking Simpson method");
         methodCalc("simp", a, b, "func");
+        
         System.out.println("\n\nStarting calculations for variant function");
+        System.out.println("Analytical integral value: arctan(x^4), x in [-1, 2] = arctan(16) - arctan(1) = arctan(16) - pi/4: " + (Math.atan(16.0f) - Math.PI/4));
         System.out.println("Checking rectangle method");
         methodCalc("rect", a2, b2, "func2");
         System.out.println("Checking trapezoid method");
