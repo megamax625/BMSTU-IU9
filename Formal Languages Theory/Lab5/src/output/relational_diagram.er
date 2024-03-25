@@ -1,0 +1,40 @@
+[Store]
+    *Store_surrogate_ID {label: "int"}
+    Location {label: "String(AK1.1)"}
+    Work_Hours {label: "String"}
+    Phone_Number {label: "String"}
+    Capacity {label: "float"}
+    Store_Goods_surrogate_ID {label: "int(FK, AK2.1)"}
+    Store_Goods_1_surrogate_ID {label: "int(FK, AK3.1)"}
+
+[Goods]
+    *Goods_surrogate_ID {label: "int"}
+    Article_Number {label: "int(AK1.1)"}
+    Batch_Number {label: "int(AK1.2)"}
+    Title {label: "String"}
+    Description {label: "String"}
+    Size {label: "float"}
+    Weight {label: "float"}
+    Exp_date {label: "datetime"}
+    Current_price {label: "money"}
+    Store_Goods_surrogate_ID {label: "int(FK, AK2.1)"}
+
+[Store_Goods]
+    *Store_Goods_surrogate_ID {label: "int"}
+    Fake {label: "String(AK1.1)"}
+    Description {label: "String"}
+
+[Store_Goods_1]
+    *Store_Goods_1_surrogate_ID {label: "int"}
+    Aboba {label: "String(AK1.1)"}
+    Description {label: "String"}
+
+[Store_Goods_1_1]
+    *Store_surrogate_ID {label: "int"}
+    *Goods_surrogate_ID {label: "int"}
+    None
+Store 1--1 Store_Goods
+Store 1--1 Store_Goods_1
+Goods 1--1 Store_Goods
+Store_Goods_1_1 *--1 Store
+Store_Goods_1_1 *--1 Goods

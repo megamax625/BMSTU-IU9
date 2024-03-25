@@ -1,0 +1,7 @@
+TableDelimeter = NEXT~
+AttributeTypeDelimeter = :: ~
+ConnectionDenomination = WITH ~
+0.1Denomination = O1 ~
+0.NDenomination = ON ~
+1.1Denomination = M1 ~
+1.NDenomination = MN

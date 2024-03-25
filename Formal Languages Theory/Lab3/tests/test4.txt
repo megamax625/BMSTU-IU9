@@ -1,0 +1,2 @@
+[S] -> a[S]b | a[C]a | b[C]b | c
+[C] -> a[C]a | b[C]b | c

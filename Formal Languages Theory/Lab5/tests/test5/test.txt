@@ -1,0 +1,21 @@
+Store {
+ID {
+   Location :: String }
+Work_Hours :: String,
+Phone_Number :: String,
+Capacity :: float,
+WITH Goods ON 
+}
+NEXT
+Goods {
+ID {
+    Article_Number :: int,
+    Batch_Number :: int
+}
+Title :: String,
+Description :: String,
+Size :: float,
+Weight :: float,
+Exp_date :: datetime,
+Current_price :: money,
+}

@@ -1,0 +1,27 @@
+Store
+n {
+ID
+{
+ Name ++Str
+ ing,
+ Fame
+ ++ int
+}
+N
+etWorth++ int ,
+CONN Mics ODINKMNOGIM
+}
+?!!
+
+Mics {
+I
+D
+ {
+Mark ++ String
+}
+Cost
+ ++int
+,
+CONN St
+oren 1.1
+}

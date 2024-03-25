@@ -1,0 +1,8 @@
+ConnectionDenomination = CONN
+~
+TableDelimeter =
+ ?!! ~
+AttributeTypeDelimeter = ++~
+1.NDenomination = ODINKMNOGIM
+
+

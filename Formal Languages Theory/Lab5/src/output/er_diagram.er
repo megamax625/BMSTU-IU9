@@ -1,0 +1,24 @@
+[Store]
+    *Location
+    Work_Hours
+    Phone_Number
+    Capacity
+[Goods]
+    *Article_Number
+    *Batch_Number
+    Title
+    Description
+    Size
+    Weight
+    Exp_date
+    Current_price
+[Store_Goods]
+    *Fake
+    Description
+[Store_Goods_1]
+    *Aboba
+    Description
+Store *--* Goods
+Store 1--1 Store_Goods
+Store 1--1 Store_Goods_1
+Goods 1--1 Store_Goods

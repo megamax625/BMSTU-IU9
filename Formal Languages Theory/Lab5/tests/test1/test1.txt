@@ -1,0 +1,23 @@
+Store
+n {
+ID
+{
+ Name : Str
+ ing
+ Fame
+ : int
+}
+N
+etWorth: int
+
+}
+,
+Mics {
+I
+D
+ {
+Mark : String
+}
+Cost : 15
+00
+}

@@ -1,0 +1,7 @@
+Store {
+ID {
+ Name : String
+ Fame : int
+}
+NetWorth: int
+}

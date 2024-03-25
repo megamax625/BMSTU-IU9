@@ -1,0 +1,40 @@
+Store {
+ID {
+   Location :: String }
+Work_Hours :: String,
+Phone_Number :: String,
+Capacity :: float,
+WITH Goods ON,
+WITH Store_Goods M1
+WITH Store_Goods_1 M1
+}
+NEXT
+Goods {
+ID {
+    Article_Number :: int,
+    Batch_Number :: int
+}
+Title :: String,
+Description :: String,
+Size :: float,
+Weight :: float,
+Exp_date :: datetime,
+Current_price :: money,
+WITH Store ON,
+WITH Store_Goods M1   
+}
+NEXT
+Store_Goods {
+ID {
+    Fake :: String }
+Description :: String,
+WITH Store M1,
+WITH Goods M1 
+}
+NEXT
+Store_Goods_1 {
+ID {
+    Aboba :: String }
+Description :: String,
+WITH Store M1
+}
