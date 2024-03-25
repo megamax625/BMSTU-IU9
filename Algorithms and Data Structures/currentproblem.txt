@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+int main()
+{
+    unsigned long seta = 0,setb = 0, temp, intersect;
+    char letter;
+    do{
+        scanf("%c", &letter);
+        temp = 1;
+        if (letter >= 65 && letter <= 90) temp << (letter - 65);
+        if (letter >= 97 && letter <= 122) temp << (letter - 71);
+        seta = seta | temp;
+    }while (letter != 32);
+    do{
+        scanf("%c", &letter);
+        temp = 1;
+        if (letter >= 65 && letter <= 90) temp << (letter - 65);
+        if (letter >= 97 && letter <= 122) temp << (letter - 71);
+        setb = setb | temp;
+    }while (letter != 10);
+    intersect = seta & setb;
+    for (char i = 0; i < 52; i++){
+        if ((intersect & ((unsigned long)1 << i)) != 0){
+            if (i < 26) printf("%c", (char)(i+65));
+            else printf("%c", (char)(i+71));
+        }
+    }
+    return 0;
+}   

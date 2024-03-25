@@ -1,0 +1,38 @@
+#include <stdio.h>
+
+int array[] = {
+        100000000,
+        200000000,
+        300000000,
+        400000000,
+        500000000
+};
+
+void revarray(void *base, unsigned long nel, unsigned long width)
+{
+    for (unsigned long i = 0; i < nel/2;i++){
+        char *sp = (char*)(base + i * width);
+        char *ep = (char*)(base + (nel - i - 1) * width);
+        for (unsigned long j = 0; j < width;j++){
+            char t = *ep;
+            *ep = *sp;
+            *sp = t;
+            sp++;
+            ep++;
+        }
+    }
+}
+
+void revarray(void*, unsigned long, unsigned long);
+
+int main(int argc, char **argv)
+{
+        revarray(array, 5, sizeof(int));
+
+        int i;
+        for (i = 0; i < 5; i++) {
+                printf("%d\n", array[i]);
+        }
+
+        return 0;
+}

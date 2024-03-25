@@ -1,0 +1,8 @@
+#include <stdio.h>
+
+int main(){
+	short m,n,sr,sc;
+	scanf("%d %d", &m,&n);
+	int min_colmns[n];
+	
+}
