@@ -1,0 +1,3 @@
+-- Функция car принимает аргумент типа [T] и возвращает значение типа T.
+-- carFromTuple(xs: (int, int)) : int = car(xs);
+carFromSingle(x: int) : int = car(x);

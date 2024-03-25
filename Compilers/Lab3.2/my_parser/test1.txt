@@ -1,0 +1,27 @@
+class Circle {
+        double radius;
+
+        // comments preserved here
+  public:
+
+  // comments preserved there
+Circle(double r) {  };
+
+double circum() {};
+
+  private:
+    double cylinder (double h) { };
+    class XXXX {
+class YYY {
+YYY(int y){};
+class ZZZZZ {
+int x;
+int y;
+};
+class PWPWPWW {
+double pw;
+PWPWPW(double x) {};
+};
+};
+    };
+};

@@ -1,0 +1,3 @@
+-- В программе не должно быть одноимённых функций.
+sum(xs: [int]) : int = 10;
+sum(xs : [int]) : int = if null(xs) then 0 else car(xs) + sum(cdr(xs));

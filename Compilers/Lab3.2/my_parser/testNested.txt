@@ -1,0 +1,17 @@
+struct enclose 
+{ 
+struct inner
+{
+int x;void 
+f
+(
+    int 
+    i
+    )
+    {
+
+    }
+    ;
+};
+};
+ 

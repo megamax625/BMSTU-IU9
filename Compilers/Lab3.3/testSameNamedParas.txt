@@ -1,0 +1,5 @@
+-- У функции не должно быть одноимённых параметров.
+-- тут всё ок
+simple(x : int, y : int) : int = x + y;
+-- а тут нет
+sameArgs(xs: [int], xs: (int, int)) : int = sum(xs);

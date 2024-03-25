@@ -1,0 +1,87 @@
+Задание:
+
+Статически типизированный функциональный язык программирования:
+
+Язык поддерживает целые числа, логические значения,
+списки и кортежи (длиной не менее чем 2).
+Тип списка записывается в квадратных скобках,
+тип кортежа — в круглых скобках через запятую.
+
+Тело функции состоит из единственного выражения,
+которое может быть условным выражением, двуместной арифметической
+операцией (знаки *, +, /, - с обычным приоритетом и ассоциативностью),
+вызовы функций, литералы кортежей (несколько выражений в круглых
+скобках через запятую) и литералы списков (несколько, в том числе и ноль,
+выражений в квадратных скобках через запятую).
+
+Тело функции завершается точкой с запятой.
+
+Комментарии начинаются с двух дефисов и продолжаются до конца строки
+
+Абстрактный синтаксис:
+
+Программа содержит ноль или более объявлений функций
+Program -> Function*
+
+Объявление функции содержит имя, принимаемые формальные параметры в скобках, 
+двоеточие, тип возвращаемого значения, знак равенства, тело функции,
+состоящее из единственного выражения и заканчивается на ';'
+Function -> Name '(' FormalParas ')' ':' Type '=' Expr ';'
+
+Формальные параметры функции содержит одно или более объявление переменной,
+разделённых запятыми
+FormalParas -> FormalPara+
+FormalPara -> Name ':' Type
+
+Тип представляется значениями int, boolean, 
+списком с типом в квадратных скобках или 
+кортежем с типом в круглых скобках через запятую (длиной не менее 2)
+Type -> 'int' | 'boolean' | '[' Type ']' | '(' Type ',' Type (',' Type)* ')'
+
+Выражение может быть условным выражением, двуместной арифметической операцией
+(знаки +,-,*,/ с обычным приоритетом и ассоциативностью), вызовы функций,
+литералы кортежей (1 и больше выражений в круглых скобках через запятую),
+литералы списков (0 и больше выражений в квадратных скобках через запятую)
+Expr -> 'if' Cond 'then' Expr 'else' Expr
+    | Expr BinOp Expr
+    | FunctionCall
+    | '(' Expr ('(' Expr ')')* ')'
+    | '[' (Expr (',' Expr)*)? ']'
+
+
+Конкретная грамматика:
+
+Program -> Function Program | ε
+Function -> Name '(' FormalParas ')' ':' Type '=' Expr ';'
+
+FormalParas -> FormalPara FormalParasTail
+FormalPara -> Name ':' Type
+FormalParasTail -> FormalPara FormalParasTail | ε
+
+Type -> 'int' | 'boolean' | '[' Type ']' | TupleType
+TupleType -> '(' Type ',' Type  TupleTypeTail ')'
+TupleTypeTail -> ',' Type TupleTypeTail | ε
+
+Expr -> 'if' Cond 'then' Expr 'else' Expr
+    | ArithExpr
+    | FunctionCall
+    | ListLiteral
+    | TupleLiteral
+
+Cond -> Cond 'and' CondTailAnd | CondTailAnd
+CondTailAnd -> CondTailAnd 'and' CondTailOr | CondTailOr
+CondTailOr -> Name | FunctionCall | '(' Cond ')' | BooleanConst
+BooleanConst -> 'true' | 'false'
+
+ArithExpr -> ArithExpr AddOp Term | Term
+Term -> Term MulOp Factor | Factor
+Factor -> Integer | FunctionCall | Name
+AddOp -> '+' | '-'
+MulOp -> '*' | '/'
+
+FunctionCall -> Name '(' ListLiteralInside ')'
+ListLiteral -> '[' ListLiteralInside ']'
+ListLiteralInside -> Expr ListLiteralInsideTail | ε
+ListLiteralInsideTail -> ',' Expr ListLiteralInsideTail | ε
+TupleLiteral -> '(' Expr ',' Expr TupleLiteralTail ')'
+TupleLiteralTail -> ',' Expr TupleLiteralTail | ε

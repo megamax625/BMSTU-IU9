@@ -1,0 +1,3 @@
+-- Функция null принимает аргумент типа [T] и возвращает значение типа bool.
+-- nullFromTuple(xs: (int, int)) : bool = null(xs);
+nullFromSingle(x: int) : bool = null(x);

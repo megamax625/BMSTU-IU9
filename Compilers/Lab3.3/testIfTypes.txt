@@ -1,0 +1,7 @@
+-- В условной операции типом условия может быть только bool,
+-- типы выражений в обеих ветвях должны совпадать.
+
+-- ifExprWithInt(x: int) : int = if x then 10 else 0;
+-- ifExprWithTuple(xs: (int, int)) : int = if xs then 1 else 0;
+-- ifExprWithList(xs: [int]) : int = if xs then 1 else 0;
+ifExprWithNonMatchingBranchTypes(x: bool) : int = if x then x else (1, 0);

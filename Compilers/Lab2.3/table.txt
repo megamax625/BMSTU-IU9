@@ -1,0 +1,21 @@
+\begin{table}[]
+\begin{tabular}{llllllllll}
+          & axiom         & {[}a-z+*{]}|\textbackslash{}\[(){]} & {[}A-Z{]}({[}A-Za-z0-9{]})*                & (                                              & )     & =     & |                                                               & .     & \$    \\
+Grammar   & ERROR         & ERROR                               & ERROR                                      & Rule Grammar                                   & ERROR & ERROR & ERROR                                                           & ERROR & ε     \\
+Rule      & ERROR         & ERROR                               & ERROR                                      & LHS EQUAL\_SIGN RHS                            & ERROR & ERROR & ERROR                                                           & ERROR & ε     \\
+LHS       & ERROR         & ERROR                               & ERROR                                      & LEFT\_PAREN Nterm RIGHT\_PAREN                 & ERROR & ERROR & ERROR                                                           & ERROR & ERROR \\
+Nterm     & AXIOM NONTERM & ERROR                               & NONTERM                                    & ERROR                                          & ERROR & ERROR & ERROR                                                           & ERROR & ERROR \\
+RHS       & ERROR         & TERM RHS\_tail DOT                  & ERROR                                      & LEFT\_PAREN NONTERM RIGHT\_PAREN RHS\_tail DOT & ERROR & ERROR & ERROR                                                           & DOT   & ERROR \\
+RHS\_tail & ERROR         & TERM RHS\_tail                      & LEFT\_PAREN NONTERM RIGHT\_PAREN RHS\_tail & ERROR                                          & ERROR & ERROR & \begin{tabular}[c]{@{}l@{}}Alternative\\ RHS\_Tail\end{tabular} & DOT   & ERROR
+\end{tabular}
+\end{table}
+
+```
+Grammar -> Rule Grammar | ε
+Rule -> LHS EQUAL_SIGN RHS
+LHS -> LEFT_PAREN Nterm RIGHT_PAREN
+Nterm -> NONTERM | AXIOM NONTERM
+RHS -> (TERM RHS_tail | LEFT_PAREN NONTERM RIGHT_PAREN RHS_tail | ε)
+RHS_tail -> TERM RHS_tail | LEFT_PAREN NONTERM RIGHT_PAREN RHS_tail | Alternative
+RHS_Tail | DOT
+```
