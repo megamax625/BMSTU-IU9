@@ -1,0 +1,7 @@
+; d = (- (* b b) (* 4 a c))
+(define (quadratic a b c)
+  (if (< (- (* b b) (* 4 a c)) 0)
+      (list)
+      (if (= (- (* b b) (* 4 a c)) 0)
+          (/ (- b) (* 2 a))
+          (list (/ (- (+ (sqrt (- (* b b) (* 4 a c))) b)) (* 2 a)) (/ (- (sqrt (- (* b b) (* 4 a c))) b) (* 2 a)))))) 

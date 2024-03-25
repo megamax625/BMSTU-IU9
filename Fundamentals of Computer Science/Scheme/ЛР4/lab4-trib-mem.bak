@@ -1,0 +1,25 @@
+(define results '())
+(define (trib-mem n)
+  (let ((memo (assoc n results)))
+    (if (not (equal? memo #f))
+        (cadr memo)
+        (let ((res (cond
+                     ((or (= n 0) (= n 1)) 0)
+                     ((= n 2) 1)
+                     ((> n 2) (+ (trib-mem (- n 1))
+                                 (trib-mem (- n 2))
+                                 (trib-mem (- n 3)))))))
+          (set! results (cons (list n res) results))
+          res))))
+
+(define (bad-trib n)
+  (cond
+    ((or (= n 0) (= n 1)) 0)
+    ((= n 2) 1)
+    ((> n 2) (+ (bad-trib (- n 1))
+                (bad-trib (- n 2))
+                (bad-trib (- n 3))))))
+
+; (trib-mem 100)
+; (trib-mem 30)
+; (bad-trib 30)

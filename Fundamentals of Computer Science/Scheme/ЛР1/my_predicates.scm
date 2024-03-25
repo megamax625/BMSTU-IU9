@@ -1,0 +1,12 @@
+(define (my-odd? number)
+  (not (= (remainder number 2) 0)))
+(define (my-even? number)
+  (= (remainder number 2) 0))
+
+(my-odd? 0) (my-even? 0)
+(my-odd? 1) (my-even? 1)
+(my-odd? 2) (my-even? 2)
+(my-odd? 100) (my-even? 100)
+(my-odd? 101) (my-even? 101)
+(my-odd? -5) (my-even? -5)
+(my-odd? -8) (my-even? -8)

@@ -1,0 +1,45 @@
+(load "stream.scm")
+(load "unit.testing.scm")
+
+;; Задание 1
+
+;<fraction> ::= <numerator> / <denominator>
+;<numerator> ::= <sign> <digit> <integer>
+;<denominator> ::= <digit> <integer>
+;<integer> ::= <digit> <integer> | empty
+;<sign> ::= + | - | empty
+;<digit> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+(define (check-frac str)
+  (define (sign? char)
+    (or (equal? char #\+) (equal? char #\-)))
+  (define (digit? char)
+    (char-numberic? char))
+  (define (scan str error)
+    (
+     ))
+  (let* ((eos ↵)
+         (stream (make-stream (string->list str) eos)))
+    (call-cc
+     (lambda (error)
+       (scan stream error)))))
+
+(define tests-1
+  (list
+   ((check-frac "110/111") #t)
+   ((check-frac "-4/3") #t)
+   ((check-frac "+5/10") #t)
+   ((check-frac "5.0/10") #f)
+   ((check-frac "FF/10") #f)
+   ((scan-frac "110/111") (/ 110 111))
+   ((scan-frac "-4/3") (/ -4 3))
+   ((scan-frac "+5/10") (/ 1 2))
+   ((scan-frac "5.0/10") #f)
+   ((scan-frac "FF/10") #f)
+   ((scan-many-fracs "\t1/2 1/3\n\n10/8") (list (/ 1 2)(/ 1 3)(/ 5 4)))
+   ((scan-many-fracs "\t1/2 1/3\n\n2/-5") #f)))
+
+(define tests-2
+  (list
+   ()
+   ))

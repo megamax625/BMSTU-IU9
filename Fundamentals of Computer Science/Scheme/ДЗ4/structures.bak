@@ -1,0 +1,3 @@
+(define-syntax define-struct
+  (syntax-rules ()
+    ((_ type (field . fields)) (eval (list 'make-'type ,@(field . fields)) (interaction-environment)))))

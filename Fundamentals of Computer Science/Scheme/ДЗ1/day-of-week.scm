@@ -1,0 +1,11 @@
+; a = (quotient (- 14 m) 12)
+; y = (- y a) = (- y (quotient (- 14 m) 12))
+; m = (+ m (* 12 a) -2) = (+ m (* 12 (quotient (- 14 m) 12)) -2)
+; dn = (remainder (+ 7000 (- (+ d y (quotient y 4) (quotient y 400)(quotient (* 31 m) 12)) (quotient y 100))) 7)
+(define (day-of-week d m y)
+  (remainder (+ 7000 (- (+ d
+                           (- y (quotient (- 14 m) 12))
+                           (quotient (- y (quotient (- 14 m) 12)) 4)
+                           (quotient (- y (quotient (- 14 m) 12)) 400)
+                           (quotient (* 31 (+ m (* 12 (quotient (- 14 m) 12)) -2)) 12))
+                        (quotient (- y (quotient (- 14 m) 12)) 100))) 7))

@@ -1,0 +1,4 @@
+(define (my-odd? number)
+  (= (remainder number 2) 1))
+(define (my-even? number)
+  (= (remainder number 2) 0))

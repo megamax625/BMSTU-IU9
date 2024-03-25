@@ -1,0 +1,17 @@
+;; Задание 6 Б. Циклы for
+(define-syntax for
+  (syntax-rules (in as)
+    ((_ x in xs . exprs) (for-each
+                          (lambda (x) (begin . exprs)) xs))
+    ((_ xs as x . exprs) (for-each
+                          (lambda (x) (begin . exprs)) xs))))
+
+;(for i in '(1 2 3)
+;  (for j in '(4 5 6)
+;    (display (list i j))
+;    (newline)))
+;(newline)
+;(for '(1 2 3) as i
+;  (for '(4 5 6) as j
+;    (display (list i j))
+;    (newline)))
