@@ -1,0 +1,8 @@
+  &H15 &HABcdEF123 &H &   
+    1 23  34asedef 
+ count   CouNt  \  
+ print   PrInT  goTO GOSuB 
+  1233435246376456345234 
+  
+wow
+&h1
